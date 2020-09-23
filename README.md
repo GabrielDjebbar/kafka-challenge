@@ -23,7 +23,8 @@ python3 prototype_probabilistic.py
 ## First solution using sets
 ### Algorithm & Datastructue
 My first basic approach was to have a dictionary of sets where each set corresponded to a time window of 1 minute.
-Basically my solution transform each record timestamp into a timestamp without seconds (I do this by dividing the timestamp by 60 and now records with the same modified statement corresponds  to the same window of 60 seconds). We can then remultiply 60 to get a coherent modified timestamp. 
+Basically my solution transforms each record timestamp into a timestamp without seconds (I do this by dividing the timestamp by 60 and now records with the same modified timestamp belongs to the same window of 60 seconds). We can then remultiply 60 to get a coherent modified timestamp. 
+#### Example 
 ### When to send output data :
 When I read the statement about the need to have the counts available as soon as possible I assumed that the data was ordered inside the kafka topic. Therefore I thought that each time I got a modifiedRecord which is different from the previous modifiedRecord it means we are onto a new time window and we can print right away the number of unique id in the previous time window (as since the data is supposedly ordered there is no way subsquent records again end being in a previous minute time window later on ).
 ![alt tag](https://github.com/GabrielDjebbar/kafka-challenge/blob/master/visual_explanation_sending_output_stdin.jpg)
