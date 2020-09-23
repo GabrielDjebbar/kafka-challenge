@@ -50,7 +50,7 @@ For 20KB I got 0.5 % error at most, which mean we can gain 10 time more space in
 ## How to scale (Throughput) :
 ### Step 1.Using Kafka Streams and its Stafeful States
  After some research I saw that Kafka Streams API (Faust in python) that allows you to do stateful operations across several consumers, like *counting*, on your streams by using Store States.
-So if I wanted some thing that could scale, by using more than one Consumer and naturally more than one partition on the source topic,  I would definitly need to use the already this API.
+So if I wanted some thing that could scale, by using more than one Consumer and naturally more than one partition on the source topic,  I would definitly need to use this API.
 
 ### Step 2. More consumers.
 Having an app that use Kafka Streams would naturally allow me to to launch multiple Consumers and speed up throughput (given the input topic is partionned accordingly).
@@ -59,11 +59,18 @@ Having an app that use Kafka Streams would naturally allow me to to launch multi
 
 ### When to output data ?
 #### 1.	Previous approach not working
-In the case of a distributed setting with several consumers I don’t see how I could use flags like before to output data based on a change of time window (aka change of modified timestamp), and this is all the more true since data is supposedly **not ordered by their timestamp**. 
+If the data is supposedly **not ordered by their timestamp** then there is no way to apply a strategy using flags. As data records corresponding to different minutes could be intermingled (like this data stream: 12h15, 12h15,12h16, 12h16, 12h17, 12h15, 12h16). 
 In this case I could very simply output the new updated count for a given minute after each processing of a new record of the stream (as Ktable is a changelog of updated key value). But this is not what buisiness want (I don’t think they would want to deal with a stream of intermdiate results). 
+Example with above data stream
+12h15 1
+12h15 2
+12h16 1
+12h17 1
+12h15 3
+12h16 2
 
 #### 2.	A possible solution : using time out.
-However if we suppose the data is **roughly ordered** (and that the bulk of one given minute time window should be roughly processed by the consumer in a small interval of time, say within 2 seconds ), we could perhaps have a *screening mechanism onto the KTable* (containing the updated count after each new record processed) that would somehow check when was the record updated for the last time inside the KTable and output the record if the time the record was last updated is above a certain time threshold (for example say 2 seconds). This way we would get the bulk of the data for a given minute and ignore the records that are really too late. 
+However if we suppose the data is **roughly ordered** (and that the bulk, say 99% of one given timestamp minute should be roughly processed by the consumer in a small interval of time, say within 2 seconds ), we could perhaps have a *screening mechanism onto the KTable* (containing the updated count after each new record processed) that would somehow check when was the record updated for the last time inside the KTable and output the record if the time the record was last updated is above a certain time threshold (for example say 2 seconds). This way we would get the bulk of the data for a given minute and ignore the records that are really too late. 
 This timeout/screening mechanism is something that should probably implemented with Kafka **punctuate()** function (from what I checked on internet ). 
 
 ![alt tag](https://github.com/GabrielDjebbar/kafka-challenge/blob/master/scale_and_edge_case.jpg)
