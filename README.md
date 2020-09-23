@@ -61,7 +61,7 @@ Having an app that use Kafka Streams would naturally allow me to to launch multi
 #### 1.	Previous approach not working
 If the data is supposedly **not ordered by their timestamp** then there is no way to apply a strategy using flags. As data records corresponding to different minutes could be intermingled (like this data stream: 12h15, 12h15,12h16, 12h16, 12h17, 12h15, 12h16). 
 In this case I could very simply output the new updated count for a given minute after each processing of a new record of the stream (as Ktable is a changelog of updated key value). But this is not what buisiness want (I don’t think they would want to deal with a stream of intermdiate results). 
-For example with the above data stream we could output :
+For example with the above data stream we could output :  
 12h15 1  
 12h15 2  
 12h16 1  
