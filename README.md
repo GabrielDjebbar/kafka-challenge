@@ -39,17 +39,18 @@ In python, a set of roughly 45 000 uid elements is 210 Kb. Below is an analysis 
 
 
 
-## Benchmark (Memory consumption, precision)
+## Benchmark (Memory consumption, approximation error)
 Comparison of HashSet and Linear probabilistic counting.
 ![alt tag](https://github.com/GabrielDjebbar/kafka-challenge/blob/master/counting_error.jpg)
 
 For 20KB I got 0.5 % error at most, which mean we can gain 10 time more space in memory for a perhaps negligeable tradeoff in accuracy (well this depends on the buisiness requirement of course).
 
 
-## How to scale ? :
+## How to scale (Throughput) :
 ### Step 1.Using Kafka Streams and its Stafeful States
- After some research I saw their was a very nice Kafka Streams API (Faust in python) that allows you to do stateful operations (aggregation like groupby namely) on your streams by using Store States.
-So if I wanted some thing that could scale, by using more than one Consumer and naturally more than one partition on the source topic,  I would need to use the already implemented Kafka Streams in order to count by doing something like.
+ After some research I saw that Kafka Streams API (Faust in python) that allows you to do stateful operations across several consumers, like *counting*, on your streams by using Store States.
+So if I wanted some thing that could scale, by using more than one Consumer and naturally more than one partition on the source topic,  I would definitly need to use the already this API.
+
 ### Step 2. More consumers.
 Having an app that use Kafka Streams would naturally allow me to to launch multiple Consumers and speed up throughput (given the input topic is partionned accordingly).
 
