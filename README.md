@@ -29,17 +29,17 @@ With {"ts":1468244384,"uid":"9bfcae2f7c3a4ec2add" }
 We take integer part of 1468244384/60 which is 24470739 and then remutiply by 60  to get 1468244340 (that's the same as doing 1468244384 - 1468244384 % 60). This modified timestamp will be used to count unique user id inside a 60 seconds window.
 
 ### When to send output data :
-When I read the statement about the need to have the counts available as soon as possible I assumed that the data was ordered inside the kafka topic. Therefore I thought that each time I got a modifiedRecord which is different from the previous modifiedRecord it means we are onto a new time window and we can print right away the number of unique id in the previous time window (as since the data is supposedly ordered there is no way subsquent records again end being in a previous minute time window later on ).
+When I read the statement about the need to have the counts available as soon as possible I assumed that the data was ordered inside the kafka topic. Therefore I thought that each time I got a modifiedRecord which is different from the previous modifiedRecord it means we are onto a new time window and we can print right away the number of unique id in the previous time window (as since the data is supposedly ordered there is no way subsquent records again end up being belonging to a previous minute later on ).
 ![alt tag](https://github.com/GabrielDjebbar/kafka-challenge/blob/master/visual_explanation_sending_output_stdin.jpg)
 ![alt tag](https://github.com/GabrielDjebbar/kafka-challenge/blob/master/sending_output_stdin.jpg)
 
 
 
 ## Second approach : Probabilistic Counting
-The second thing I did was to build on to my basic solution by adding a LPC (Linear probabilistic Counting instead of using a simple map). This algorithm allows to have a trade-off between memory and couting error. I tried to see what was the evolution of the counting error depending on the size of the hashmap as I thought it might be useful to reduce the size when counting even for a more advanced solution and Scalable solution using multiple consumers.
+The second thing I did was to build on to my basic solution by adding a LPC (Linear probabilistic Counter, which use a bit array, instead of using a simple set). This algorithm allows to have a trade-off between memory and couting error. I tried to see what was the evolution of the counting error depending on the size of the bit array as I thought it might be useful to think a memory usage reduction for a more scalable solution with records of 2 years worth of data and not just 15 minutes.
 
-After running my first solution (dictionary of sets) I found that the number of unique users per minute is roughly 45000. So I thought I could use this value as baseline to try improve memory usage.
-In python, a set of roughly 45 000 uid elements is 210 Kb. Below is an analysis of the performance error versus the memory gain. 
+After running my first solution (dictionary of sets) I found that the number of unique users per minute is roughly 45000. 
+In python, a set of roughly 45 000 uid elements is 210 Kb. Therefore I used 210Kb as my baseline for testing the evolution of the approximation error. Below is an analysis of the performance error versus the memory gain. 
 
 
 
