@@ -10,15 +10,15 @@ bin/kafka-server-start.sh config/server.properties
 Your_path_to/kafka-console-producer.sh --broker-list localhost:9092 --topic user-timeline < stream.jsonl
 
 ### Install python and libs :
-apt install python3
-apt install python3-pip
+apt install python3  
+apt install python3-pip  
 pip3 install -r requirements.txt
 
-### Launch the python script:
-python3 prototype_simple.py
-or 
-python3 prototype_probabilistic.py
-to see the kafka records being consumed and results of counting printed to stdin.
+### Launch the python script (to see the kafka records being consumed and results of counting printed to stdin):
+python3 prototype_simple.py  
+or  
+python3 prototype_probabilistic.py  
+
 
 ## First solution using sets
 ### Algorithm & Datastructue
