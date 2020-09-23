@@ -6,7 +6,7 @@ bin/zookeeper-server-start.sh config/zookeeper.properties
 
 bin/kafka-server-start.sh config/server.properties
 
-Populate topic with jsonl data:
+## Populate topic with jsonl data:
 Your_path_to/kafka-console-producer.sh --broker-list localhost:9092 --topic user-timeline < stream.jsonl
 
 ### Install python and libs :
@@ -27,7 +27,7 @@ Basically my solution transform each record timestamp into a timestamp without s
 ### When to send output data :
 When I read the statement about the need to have the counts available as soon as possible I assumed that the data was ordered inside the kafka topic. Therefore I thought that each time I got a modifiedRecord which is different from the previous modifiedRecord it means we are onto a new time window and we can print right away the number of unique id in the previous time window (as since the data is supposedly ordered there is no way subsquent records again end being in a previous minute time window later on ).
 ![alt tag](https://github.com/GabrielDjebbar/kafka-challenge/blob/master/visual_explanation_sending_output_stdin.jpg)
-![alt tag](https://github.com/GabrielDjebbar/kafka-challenge/blob/master/sending_ouput_stdin.jpg)
+![alt tag](https://github.com/GabrielDjebbar/kafka-challenge/blob/master/sending_output_stdin.jpg)
 
 
 
