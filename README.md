@@ -60,7 +60,7 @@ Having an app that use Kafka Streams would naturally allow me to to launch multi
 ### When to output data ?
 #### 1.	Previous approach not working
 In the case of a distributed setting with several consumers I don’t see how I could use flags like before to output data based on a change of time window (aka change of modified timestamp), and this is all the more true since data is supposedly **not ordered by their timestamp**. 
-In this case I could very simply output the new updated count for a given minute time window after each new record of the stream (as Ktable is a changelog of updated key value). But this is not what buisiness want (I don’t think they would want to deal with a stream of intermdiate results). 
+In this case I could very simply output the new updated count for a given minute after each processing of a new record of the stream (as Ktable is a changelog of updated key value). But this is not what buisiness want (I don’t think they would want to deal with a stream of intermdiate results). 
 
 #### 2.	A possible solution : using time out.
 However if we suppose the data is **roughly ordered** (and that the bulk of one given minute time window should be roughly processed by the consumer in a small interval of time, say within 2 seconds ), we could perhaps have a *screening mechanism onto the KTable* (containing the updated count after each new record processed) that would somehow check when was the record updated for the last time inside the KTable and output the record if the time the record was last updated is above a certain time threshold (for example say 2 seconds). This way we would get the bulk of the data for a given minute and ignore the records that are really too late. 
