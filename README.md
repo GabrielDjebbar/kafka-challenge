@@ -61,15 +61,15 @@ Having an app that use Kafka Streams would naturally allow me to to launch multi
 #### 1.	Previous approach not working
 If the data is supposedly **not ordered by their timestamp** then there is no way to apply a strategy using flags. As data records corresponding to different minutes could be intermingled (like this data stream: 12h15, 12h15,12h16, 12h16, 12h17, 12h15, 12h16). 
 In this case I could very simply output the new updated count for a given minute after each processing of a new record of the stream (as Ktable is a changelog of updated key value). But this is not what buisiness want (I don’t think they would want to deal with a stream of intermdiate results). 
-Example with above data stream
-12h15 1
-12h15 2
-12h16 1
-12h17 1
-12h15 3
+For example with the above data stream we could output :
+12h15 1  
+12h15 2  
+12h16 1  
+12h17 1  
+12h15 3  
 12h16 2
 
-#### 2.	A possible solution : using time out.
+#### 2.	A possible solution that answers buisiness: using time out.
 However if we suppose the data is **roughly ordered** (and that the bulk, say 99% of one given timestamp minute should be roughly processed by the consumer in a small interval of time, say within 2 seconds ), we could perhaps have a *screening mechanism onto the KTable* (containing the updated count after each new record processed) that would somehow check when was the record updated for the last time inside the KTable and output the record if the time the record was last updated is above a certain time threshold (for example say 2 seconds). This way we would get the bulk of the data for a given minute and ignore the records that are really too late. 
 This timeout/screening mechanism is something that should probably implemented with Kafka **punctuate()** function (from what I checked on internet ). 
 
