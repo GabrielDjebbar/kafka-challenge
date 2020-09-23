@@ -62,8 +62,8 @@ In the case of a distributed setting with several consumers I don’t see how I 
 In this case I could very simply output the new updated count for a given minute time window after each new record of the stream (as Ktable is a changelog of updated key value). But this is not what buisiness want (I don’t think they would want to deal with a stream of intermdiate results). 
 
 #### 2.	A possible solution : using time out.
-However if we suppose the data is **roughly ordered** (and that the bulk of one given minute time window would be roughly processes by the consumer at the same time, say within 2 seconds ), we could perhaps have a screening mechanism onto the KTable (containing the updated count after each new record processed) at that would check when was the record updated for the last time inside the KTable and output the record if the time the record was last updated is above a certain time threshold (for example say 2 seconds). This way we would get the bulk of the data for a given minute and ignore the records that are really too late. 
-This would be something implemented probably with Kafka **punctuate()** function (from what I checked on internet ). 
+However if we suppose the data is **roughly ordered** (and that the bulk of one given minute time window should be roughly processed by the consumer in a small interval of time, say within 2 seconds ), we could perhaps have a screening mechanism onto the KTable (containing the updated count after each new record processed) that would somehow check when was the record updated for the last time inside the KTable and output the record if the time the record was last updated is above a certain time threshold (for example say 2 seconds). This way we would get the bulk of the data for a given minute and ignore the records that are really too late. 
+This timeout/screening mechanism is something that should probably implemented with Kafka **punctuate()** function (from what I checked on internet ). 
 
 ![alt tag](https://github.com/GabrielDjebbar/kafka-challenge/blob/master/scale_and_edge_case.jpg)
 
@@ -71,4 +71,4 @@ https://stackoverflow.com/questions/51631413/timeout-for-aggregated-records-in-k
 https://stackoverflow.com/questions/47125764/timeouts-for-kafka-streams
 
 ## If I could do it again : 
-I would try going for Java instead of Python as documentation around Kafka Stream seems to be a lot more complete (moreover not all functionalities have been ported to Python it seems). But mostly, not having dealt with Kafka streams beforehand held me back for wrapping my head around a scalable approach.
+I would try going for Java instead of Python as documentation around Kafka Stream seems to be a lot more complete (moreover not all functionalities have been ported to Python it seems, punctuate amongst other). But mostly, not having dealt with Kafka streams beforehand held me back for wrapping my head around a scalable approach that worked as buisiness intended.
